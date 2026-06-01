@@ -25,7 +25,7 @@
   --mobile-height: 1553px;
   --body-font: "Shippori Antique", sans-serif;
   --heading-font: "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Noto Serif JP", serif;
-  --building-duration: 450ms;
+  --building-duration: 200ms;
   --building-easing: ease-out;
   --content-delay: 450ms;
   --content-duration: 140ms;
@@ -345,17 +345,45 @@ body.is-loaded .hero-reveal {
   animation: contentFadeIn var(--content-duration) linear var(--content-delay) forwards;
 }
 
+.svg-flicker {
+  display: block;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.svg-flicker-piece,
+.svg-flicker-final {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+  opacity: 0;
+}
+
+.svg-flicker-piece {
+  clip-path: inset(0 calc(100% - var(--clip-end)) 0 var(--clip-start));
+}
+
+.svg-flicker-final {
+  z-index: 2;
+}
+
+body.is-loaded .svg-flicker-piece {
+  animation: flicker 1.2s forwards;
+}
+
+body.is-loaded .svg-flicker-final {
+  animation: contentFadeIn 1ms linear forwards;
+}
+
 .hero-heading-img {
   position: absolute;
   top: 0;
   left: 321px;
   width: 637px;
   height: 132px;
-  opacity: 0;
-}
-
-body.is-loaded .hero-heading-img {
-  animation: flicker 1.2s forwards var(--content-delay);
 }
 
 .hero-kicker-img {
@@ -364,10 +392,6 @@ body.is-loaded .hero-heading-img {
   left: 494px;
   width: 292px;
   height: 42px;
-}
-
-body.is-loaded .hero-kicker-img {
-  animation: flicker 1.2s forwards calc(var(--content-delay) + 0.2s);
 }
 
 .hero-lead {
@@ -767,12 +791,7 @@ body.is-loaded .hero-kicker-img {
     left: 299.5px;
     width: 279px;
     height: 58px;
-    opacity: 0;
     transform: translateX(-50%);
-  }
-
-  body.is-loaded .mobile-heading {
-    animation: flicker 1.2s forwards var(--content-delay);
   }
 
   .mobile-kicker {
@@ -827,10 +846,6 @@ body.is-loaded .hero-kicker-img {
 
   body.is-loaded .mobile-reveal {
     animation: contentFadeIn var(--content-duration) linear var(--content-delay) forwards;
-  }
-
-  body.is-loaded .mobile-kicker {
-    animation: flicker 1.2s forwards calc(var(--content-delay) + 0.2s);
   }
 
   .mobile-photo {
@@ -1087,7 +1102,9 @@ body.is-loaded .hero-kicker-img {
   .hero-reveal,
   .hero-heading-img,
   .mobile-reveal,
-  .mobile-heading {
+  .mobile-heading,
+  .svg-flicker-piece,
+  .svg-flicker-final {
     opacity: 1 !important;
     animation: none !important;
   }

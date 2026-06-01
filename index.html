@@ -54,9 +54,9 @@
         </div>
 
         <h1 id="hero-title" class="sr-only">空間を、動かせ。</h1>
-        <img class="hero-heading-img" src="assets/copy-ja.svg" width="637" height="132" alt="" aria-hidden="true">
+        <span class="hero-heading-img svg-flicker" data-flicker-svg="assets/copy-ja.svg" data-flicker-pieces="8" data-flicker-start="0" aria-hidden="true"></span>
 
-        <img class="hero-kicker-img hero-reveal" src="assets/copy-en.svg" width="292" height="42" alt="Beyond the Square">
+        <span class="hero-kicker-img svg-flicker" data-flicker-svg="assets/copy-en.svg" data-flicker-pieces="12" data-flicker-start="0.2" role="img" aria-label="Beyond the Square"></span>
         <p class="hero-lead hero-reveal">地図を縦に拡げ、空間に命を吹き込む。それがIHIパーキングスクエアです。</p>
 
         <div class="copy-block copy-block-left hero-reveal">
@@ -126,8 +126,8 @@
         <h2 id="mobile-hero-title" class="sr-only">空間を、動かせ。</h2>
 
         <div class="mobile-visual">
-          <img class="mobile-heading" src="assets/copy-ja.svg" width="279" height="58" alt="" aria-hidden="true">
-          <img class="mobile-kicker mobile-reveal" src="assets/copy-en.svg" width="220" height="32" alt="Beyond the Square">
+          <span class="mobile-heading svg-flicker" data-flicker-svg="assets/copy-ja.svg" data-flicker-pieces="8" data-flicker-start="0" aria-hidden="true"></span>
+          <span class="mobile-kicker svg-flicker" data-flicker-svg="assets/copy-en.svg" data-flicker-pieces="12" data-flicker-start="0.2" role="img" aria-label="Beyond the Square"></span>
           <p class="mobile-lead mobile-reveal">
             <span>地図を縦に拡げ、空間に命を吹き込む。</span>
             <span>それがIHIパーキングスクエアです。</span>
@@ -202,7 +202,42 @@
         const baseWidth = 1280;
         const baseHeight = 1734;
         const building = document.querySelector("[data-building-image]");
+        const flickerSvgs = document.querySelectorAll("[data-flicker-svg]");
         const reveal = () => document.body.classList.add("is-loaded");
+        const setupFlickerSvg = () => {
+          flickerSvgs.forEach((container) => {
+            const src = container.dataset.flickerSvg;
+            const pieceCount = Number(container.dataset.flickerPieces || 1);
+            const startOffset = Number(container.dataset.flickerStart || 0);
+            const fragment = document.createDocumentFragment();
+
+            for (let index = 0; index < pieceCount; index += 1) {
+              const piece = document.createElement("img");
+              const overlap = 0.18;
+              const clipStart = Math.max(0, (index / pieceCount) * 100 - overlap);
+              const clipEnd = Math.min(100, ((index + 1) / pieceCount) * 100 + overlap);
+
+              piece.src = src;
+              piece.alt = "";
+              piece.className = "svg-flicker-piece";
+              piece.setAttribute("aria-hidden", "true");
+              piece.style.setProperty("--clip-start", `${clipStart}%`);
+              piece.style.setProperty("--clip-end", `${clipEnd}%`);
+              piece.style.animationDelay = `calc(var(--content-delay) + ${startOffset + index * 0.05}s)`;
+              fragment.appendChild(piece);
+            }
+
+            const finalImage = document.createElement("img");
+            finalImage.src = src;
+            finalImage.alt = "";
+            finalImage.className = "svg-flicker-final";
+            finalImage.setAttribute("aria-hidden", "true");
+            finalImage.style.animationDelay = `calc(var(--content-delay) + ${startOffset + (pieceCount - 1) * 0.05 + 1.2}s)`;
+            fragment.appendChild(finalImage);
+
+            container.appendChild(fragment);
+          });
+        };
         const setResponsiveScale = () => {
           const viewportWidth = window.visualViewport?.width || window.innerWidth || document.documentElement.clientWidth || baseWidth;
           const scale = viewportWidth > 768 ? viewportWidth / baseWidth : 1;
@@ -214,6 +249,7 @@
           root.style.setProperty("--stage-height", `${Math.ceil(baseHeight * scale)}px`);
         };
 
+        setupFlickerSvg();
         setResponsiveScale();
         window.addEventListener("resize", setResponsiveScale, { passive: true });
 
