@@ -25,10 +25,11 @@
   --mobile-height: 1553px;
   --body-font: "Shippori Antique", sans-serif;
   --heading-font: "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Noto Serif JP", serif;
-  --building-duration: 200ms;
+  --building-duration: 600ms;
   --building-easing: ease-out;
   --content-delay: 450ms;
   --content-duration: 140ms;
+  --flicker-duration: 1.8s;
 }
 
 * {
@@ -315,7 +316,7 @@ img {
 
 .building-layer {
   position: absolute;
-  top: 306px;
+  top: 229px;
   left: 50%;
   width: 1280px;
   height: 1316px;
@@ -371,7 +372,9 @@ body.is-loaded .hero-reveal {
 }
 
 body.is-loaded .svg-flicker-piece {
-  animation: flicker 1.2s forwards;
+  animation-name: flicker;
+  animation-duration: var(--flicker-duration);
+  animation-fill-mode: forwards;
 }
 
 body.is-loaded .svg-flicker-final {
@@ -396,7 +399,7 @@ body.is-loaded .svg-flicker-final {
 
 .hero-lead {
   position: absolute;
-  top: 219px;
+  top: 136px;
   left: 50%;
   margin: 0;
   font-size: 18px;
@@ -422,20 +425,20 @@ body.is-loaded .svg-flicker-final {
 }
 
 .copy-block-left {
-  top: 337px;
+  top: 260px;
   left: 48px;
   width: 314px;
   white-space: nowrap;
 }
 
 .copy-block-right {
-  top: 647px;
+  top: 570px;
   left: 949px;
   width: 291px;
 }
 
 .copy-block-bottom {
-  top: 817px;
+  top: 740px;
   left: 72px;
   gap: 0;
   white-space: nowrap;
@@ -458,35 +461,35 @@ body.is-loaded .svg-flicker-final {
 }
 
 .photo-phone {
-  top: 593px;
+  top: 516px;
   left: 103px;
   width: 251px;
   height: 168px;
 }
 
 .photo-worker {
-  top: 969px;
+  top: 892px;
   left: 247px;
   width: 180px;
   height: 120px;
 }
 
 .photo-welding {
-  top: 943px;
+  top: 866px;
   left: 815px;
   width: 207px;
   height: 138px;
 }
 
 .photo-presenting {
-  top: 1031px;
+  top: 954px;
   left: 1070px;
   width: 160px;
   height: 106px;
 }
 
 .photo-binoculars {
-  top: 386px;
+  top: 309px;
   left: 864px;
   width: 330px;
   height: 221px;
@@ -529,7 +532,7 @@ body.is-loaded .svg-flicker-final {
 }
 
 .dot-b {
-  top: 675px;
+  top: 598px;
   left: 64px;
   width: 8px;
   height: 8px;
@@ -557,7 +560,7 @@ body.is-loaded .svg-flicker-final {
 }
 
 .dot-f {
-  top: 798px;
+  top: 721px;
   left: 1224px;
   width: 12px;
   height: 12px;
@@ -571,7 +574,7 @@ body.is-loaded .svg-flicker-final {
 }
 
 .dot-h {
-  top: 972px;
+  top: 895px;
   left: 1104px;
   width: 8px;
   height: 8px;
@@ -805,7 +808,7 @@ body.is-loaded .svg-flicker-final {
 
   .mobile-lead {
     position: absolute;
-    top: 148px;
+    top: 100px;
     left: 308.5px;
     display: flex;
     flex-direction: column;

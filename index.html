@@ -56,7 +56,6 @@
         <h1 id="hero-title" class="sr-only">空間を、動かせ。</h1>
         <span class="hero-heading-img svg-flicker" data-flicker-svg="assets/copy-ja.svg" data-flicker-pieces="8" data-flicker-start="0" aria-hidden="true"></span>
 
-        <span class="hero-kicker-img svg-flicker" data-flicker-svg="assets/copy-en.svg" data-flicker-pieces="12" data-flicker-start="0.2" role="img" aria-label="Beyond the Square"></span>
         <p class="hero-lead hero-reveal">地図を縦に拡げ、空間に命を吹き込む。それがIHIパーキングスクエアです。</p>
 
         <div class="copy-block copy-block-left hero-reveal">
@@ -127,7 +126,6 @@
 
         <div class="mobile-visual">
           <span class="mobile-heading svg-flicker" data-flicker-svg="assets/copy-ja.svg" data-flicker-pieces="8" data-flicker-start="0" aria-hidden="true"></span>
-          <span class="mobile-kicker svg-flicker" data-flicker-svg="assets/copy-en.svg" data-flicker-pieces="12" data-flicker-start="0.2" role="img" aria-label="Beyond the Square"></span>
           <p class="mobile-lead mobile-reveal">
             <span>地図を縦に拡げ、空間に命を吹き込む。</span>
             <span>それがIHIパーキングスクエアです。</span>
@@ -203,9 +201,12 @@
         const baseHeight = 1734;
         const building = document.querySelector("[data-building-image]");
         const flickerSvgs = document.querySelectorAll("[data-flicker-svg]");
+
         const reveal = () => document.body.classList.add("is-loaded");
-        const setupFlickerSvg = () => {
+
+        const setupFlickerSvg = (pieceInterval, flickerDuration) => {
           flickerSvgs.forEach((container) => {
+            while (container.firstChild) container.removeChild(container.firstChild);
             const src = container.dataset.flickerSvg;
             const pieceCount = Number(container.dataset.flickerPieces || 1);
             const startOffset = Number(container.dataset.flickerStart || 0);
@@ -216,14 +217,13 @@
               const overlap = 0.18;
               const clipStart = Math.max(0, (index / pieceCount) * 100 - overlap);
               const clipEnd = Math.min(100, ((index + 1) / pieceCount) * 100 + overlap);
-
               piece.src = src;
               piece.alt = "";
               piece.className = "svg-flicker-piece";
               piece.setAttribute("aria-hidden", "true");
               piece.style.setProperty("--clip-start", `${clipStart}%`);
               piece.style.setProperty("--clip-end", `${clipEnd}%`);
-              piece.style.animationDelay = `calc(var(--content-delay) + ${startOffset + index * 0.05}s)`;
+              piece.style.animationDelay = `calc(var(--content-delay) + ${startOffset + index * pieceInterval}s)`;
               fragment.appendChild(piece);
             }
 
@@ -232,42 +232,40 @@
             finalImage.alt = "";
             finalImage.className = "svg-flicker-final";
             finalImage.setAttribute("aria-hidden", "true");
-            finalImage.style.animationDelay = `calc(var(--content-delay) + ${startOffset + (pieceCount - 1) * 0.05 + 1.2}s)`;
+            finalImage.style.animationDelay = `calc(var(--content-delay) + ${startOffset + (pieceCount - 1) * pieceInterval + flickerDuration}s)`;
             fragment.appendChild(finalImage);
-
             container.appendChild(fragment);
           });
         };
+
         const setResponsiveScale = () => {
           const viewportWidth = window.visualViewport?.width || window.innerWidth || document.documentElement.clientWidth || baseWidth;
           const scale = viewportWidth > 768 ? viewportWidth / baseWidth : 1;
           const layoutWidth = baseWidth * scale;
           const layoutLeft = Math.max(0, (viewportWidth - layoutWidth) / 2);
-
           root.style.setProperty("--layout-scale", scale.toFixed(5));
           root.style.setProperty("--layout-left", `${layoutLeft}px`);
           root.style.setProperty("--stage-height", `${Math.ceil(baseHeight * scale)}px`);
         };
 
-        setupFlickerSvg();
+        setupFlickerSvg(0.1, 1.8);
         setResponsiveScale();
         window.addEventListener("resize", setResponsiveScale, { passive: true });
 
-        if (!building) {
-          reveal();
-          return;
-        }
-
-        if (building.decode) {
-          building.decode().then(reveal).catch(reveal);
-        } else if (building.complete) {
-          reveal();
+        if (building) {
+          if (building.decode) {
+            building.decode().then(reveal).catch(reveal);
+          } else if (building.complete) {
+            reveal();
+          } else {
+            building.addEventListener("load", reveal, { once: true });
+            building.addEventListener("error", reveal, { once: true });
+          }
+          window.setTimeout(reveal, 2000);
         } else {
-          building.addEventListener("load", reveal, { once: true });
-          building.addEventListener("error", reveal, { once: true });
+          reveal();
         }
 
-        window.setTimeout(reveal, 2000);
       })();
     </script>
   </body>
